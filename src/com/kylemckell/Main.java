@@ -11,12 +11,12 @@ public class Main {
     static final Random random = new Random();
     public static void main(String[] args) {
         Set<Card> flashcards = new HashSet<>();
-        SortedSet<String> log = new TreeSet<>();
+        Log logs = new Log();
+        logs.outputMessage("Input the action (add, remove, import, export, ask, exit):");
         boolean anotherAction = true;
         while (anotherAction) {
-            outputMessage("Input the action (add, remove, import, export, ask, exit):", log);
             String action = input.nextLine();
-            log.add(action);
+            logs.storeMessage(action);
             switch (action) {
                 case "add":
                     addCard(flashcards);
@@ -34,6 +34,10 @@ public class Main {
                     askCard(flashcards);
                     break;
                 case "log":
+                    logs.outputMessage("File name:");
+                    String fileName = input.nextLine();
+                    logs.storeMessage(fileName);
+                    logs.exportLog(fileName);
                     break;
                 case "exit":
                     anotherAction = false;
@@ -44,10 +48,6 @@ public class Main {
             }
             System.out.println();
         }
-    }
-
-    public static void outputMessage(String message, SortedSet<String> log) {
-        System.out.println(message);
     }
 
     public static void addCard(Set<Card> flashcards) {
@@ -84,7 +84,7 @@ public class Main {
         }
     }
 
-    public static void exportCards(Set<Card> flashcards) {
+    public static void exportCards(Collection<Card> flashcards) {
         System.out.println("File name:");
         String fileName = input.nextLine();
         File file = new File("./" + fileName);
@@ -121,6 +121,7 @@ public class Main {
         for (Card flashcard: flashcards) {
             if (flashcard.getTerm().equals(card.getTerm())) {
                 flashcard.setDefinition(cardArray[1]);
+                flashcard.setMistakes(Integer.parseInt(cardArray[2]));
                 return;
             }
             else if (flashcard.getDefinition().equals(card.getDefinition())) {
