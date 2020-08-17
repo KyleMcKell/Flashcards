@@ -3,14 +3,14 @@ package com.kylemckell;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Log {
-    private SortedSet<String> logs;
+    private Collection<String> logs;
 
     public Log() {
-        this.logs = new TreeSet<>();
+        this.logs = new ArrayList<>();
     }
 
     public void outputMessage(String message) {
@@ -26,12 +26,12 @@ public class Log {
         File file = new File("./" + fileName);
         try (FileWriter writer = new FileWriter(file)) {
             for (String line: logs) {
-                writer.write(line);
+                writer.write(line + "\n");
             }
             outputMessage("The log has been saved");
         } catch (IOException e) {
             System.out.printf("An exception occurs %s", e.getMessage());
-            storeMessage("An exception occured");
+            storeMessage("An exception occurred");
         }
     }
 }

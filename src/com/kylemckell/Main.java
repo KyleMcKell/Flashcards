@@ -9,14 +9,14 @@ import java.util.*;
 public class Main {
     static final Scanner input = new Scanner(System.in);
     static final Random random = new Random();
+    static final Log log = new Log();
     public static void main(String[] args) {
         Set<Card> flashcards = new HashSet<>();
-        Log logs = new Log();
-        logs.outputMessage("Input the action (add, remove, import, export, ask, exit):");
         boolean anotherAction = true;
         while (anotherAction) {
+            log.outputMessage("Input the action (add, remove, import, export, ask, exit):");
             String action = input.nextLine();
-            logs.storeMessage(action);
+            log.storeMessage(action);
             switch (action) {
                 case "add":
                     addCard(flashcards);
@@ -31,76 +31,85 @@ public class Main {
                     exportCards(flashcards);
                     break;
                 case "ask":
+                    if(flashcards.isEmpty()) {
+                        log.outputMessage("Add a card first!");
+                        break;
+                    }
                     askCard(flashcards);
                     break;
                 case "log":
-                    logs.outputMessage("File name:");
+                    log.outputMessage("File name:");
                     String fileName = input.nextLine();
-                    logs.storeMessage(fileName);
-                    logs.exportLog(fileName);
+                    log.storeMessage(fileName);
+                    log.exportLog(fileName);
                     break;
                 case "exit":
                     anotherAction = false;
-                    System.out.println("Bye bye!");
+                    log.outputMessage("Bye bye!");
                     break;
                 default:
                     break;
             }
-            System.out.println();
         }
     }
 
     public static void addCard(Set<Card> flashcards) {
-        System.out.println("The card:");
+        log.outputMessage("The card:");
         String term = input.nextLine();
+        log.storeMessage(term);
         for (Card card: flashcards) {
             if (card.getTerm().equals(term)) {
-                System.out.println("The card \"" + term + "\" already exists.");
+                log.outputMessage("The card \"" + term + "\" already exists.");
                 return;
             }
         }
-        System.out.println("The definition of the card:");
+        log.outputMessage("The definition of the card:");
         String definition = input.nextLine();
+        log.storeMessage(definition);
         for (Card card: flashcards) {
             if (card.getDefinition().equals(definition)) {
-                System.out.println("The definition of \"" + definition + "\" already exists.");
+                log.outputMessage("The definition of \"" + definition + "\" already exists.");
                 return;
             }
         }
-        System.out.println("The pair (\"" + term + "\":\"" + definition + "\") has been added.");
+        log.outputMessage("The pair (\"" + term + "\":\"" + definition + "\") has been added.");
         flashcards.add(new Card(term, definition));
     }
 
     public static void removeCard(Set<Card> flashcards) {
-        System.out.println("The card:");
+        log.outputMessage("The card:");
         String cardTerm = input.nextLine();
+        log.storeMessage(cardTerm);
         int initialSize = flashcards.size();
         flashcards.removeIf(card -> card.getTerm().equals(cardTerm));
         if (initialSize == flashcards.size()) {
-            System.out.println("Can't remove \"" + cardTerm + "\":m there is no such card.");
+            log.outputMessage("Can't remove \"" + cardTerm + "\":m there is no such card.");
         }
         else {
-            System.out.println("The card has been removed");
+            log.outputMessage("The card has been removed");
         }
     }
 
     public static void exportCards(Collection<Card> flashcards) {
-        System.out.println("File name:");
+        log.outputMessage("File name:");
         String fileName = input.nextLine();
+        log.storeMessage(fileName);
         File file = new File("./" + fileName);
         try (FileWriter writer = new FileWriter(file)) {
             for (Card card: flashcards) {
                 writer.write(card.getTerm() + "," + card.getDefinition() +  "," + card.getMistakes() + "\n");
             }
-            System.out.println(flashcards.size() + " cards have been saved.");
+            log.outputMessage(flashcards.size() + " cards have been saved.");
         } catch (IOException e) {
             System.out.printf("An exception occurs %s", e.getMessage());
+            log.storeMessage("An exception occurred");
         }
     }
 
     public static void importCards(Set<Card> flashcards) {
-        System.out.println("File name:");
+        log.outputMessage("File name:");
         String fileName = input.nextLine();
+        log.storeMessage(fileName);
         File file = new File(fileName);
         try (Scanner scanner = new Scanner(file)) {
             int count = 0;
@@ -108,9 +117,9 @@ public class Main {
                 importParser(scanner.nextLine(), flashcards);
                 count++;
             }
-            System.out.println(count + " cards have been loaded.");
+            log.outputMessage(count + " cards have been loaded.");
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            log.outputMessage("File not found");
         }
 
     }
@@ -132,8 +141,9 @@ public class Main {
     }
 
     public static void askCard(Set<Card> flashcards) {
-        System.out.println("How many times to ask?");
+        log.outputMessage("How many times to ask?");
         int count = input.nextInt();
+        log.storeMessage(Integer.toString(count));
         input.nextLine();
         while (count > 0) {
             int referenceRandom = random.nextInt(flashcards.size());
@@ -149,21 +159,22 @@ public class Main {
     }
 
     public static void cardGrading(Card card, Set<Card> flashcards) {
-        System.out.println("Print the definition of \"" + card.getTerm() + "\":");
+        log.outputMessage("Print the definition of \"" + card.getTerm() + "\":");
         String definition = input.nextLine();
+        log.storeMessage(definition);
         if (definition.equals(card.getDefinition())) {
-            System.out.println("Correct Answer");
+            log.outputMessage("Correct Answer");
             return;
         }
         for (Card flashcard: flashcards) {
             if (definition.equals(flashcard.getDefinition())) {
-                System.out.println("Wrong answer. The right answer is \"" + card.getDefinition() +
+                log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() +
                         "\", but your definition is correct for \"" + flashcard.getTerm() + "\"."
                 );
                 return;
             }
         }
-        System.out.println("Wrong answer. The right answer is \"" + card.getDefinition() + "\".");
+        log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() + "\".");
     }
 }
 
