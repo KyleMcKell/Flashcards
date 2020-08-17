@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Log {
-    private Collection<String> logs;
+    private final Collection<String> logs;
 
     public Log() {
         this.logs = new ArrayList<>();

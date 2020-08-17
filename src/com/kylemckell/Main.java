@@ -166,11 +166,13 @@ public class Main {
             log.outputMessage("Correct Answer");
             return;
         }
+        card.addMistake();
         for (Card flashcard: flashcards) {
             if (definition.equals(flashcard.getDefinition())) {
                 log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() +
                         "\", but your definition is correct for \"" + flashcard.getTerm() + "\"."
                 );
+
                 return;
             }
         }

@@ -29,4 +29,8 @@ class Card {
     public void setMistakes(int mistakes) {
         this.mistakes = mistakes;
     }
+
+    public void addMistake() {
+        mistakes++;
+    }
 }
