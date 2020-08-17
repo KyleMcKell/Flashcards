@@ -11,10 +11,13 @@ public class Main {
     static final Random random = new Random();
     public static void main(String[] args) {
         Set<Card> flashcards = new HashSet<>();
+        SortedSet<String> log = new TreeSet<>();
         boolean anotherAction = true;
         while (anotherAction) {
-            System.out.println("Input the action (add, remove, import, export, ask, exit):");
-            switch (input.nextLine()) {
+            outputMessage("Input the action (add, remove, import, export, ask, exit):", log);
+            String action = input.nextLine();
+            log.add(action);
+            switch (action) {
                 case "add":
                     addCard(flashcards);
                     break;
@@ -30,17 +33,21 @@ public class Main {
                 case "ask":
                     askCard(flashcards);
                     break;
+                case "log":
+                    break;
                 case "exit":
                     anotherAction = false;
                     System.out.println("Bye bye!");
-                    break;
-                case "log":
                     break;
                 default:
                     break;
             }
             System.out.println();
         }
+    }
+
+    public static void outputMessage(String message, SortedSet<String> log) {
+        System.out.println(message);
     }
 
     public static void addCard(Set<Card> flashcards) {
@@ -83,7 +90,7 @@ public class Main {
         File file = new File("./" + fileName);
         try (FileWriter writer = new FileWriter(file)) {
             for (Card card: flashcards) {
-                writer.write(card.getTerm() + "," + card.getDefinition() + "\n");
+                writer.write(card.getTerm() + "," + card.getDefinition() +  "," + card.getMistakes() + "\n");
             }
             System.out.println(flashcards.size() + " cards have been saved.");
         } catch (IOException e) {
