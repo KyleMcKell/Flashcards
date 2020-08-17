@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
@@ -14,7 +15,7 @@ public class Main {
         Set<Card> flashcards = new HashSet<>();
         boolean anotherAction = true;
         while (anotherAction) {
-            log.outputMessage("Input the action (add, remove, import, export, ask, exit):");
+            log.outputMessage("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
             String action = input.nextLine();
             log.storeMessage(action);
             switch (action) {
@@ -42,6 +43,9 @@ public class Main {
                     String fileName = input.nextLine();
                     log.storeMessage(fileName);
                     log.exportLog(fileName);
+                    break;
+                case "hardest card":
+                    hardestCard(flashcards);
                     break;
                 case "exit":
                     anotherAction = false;
@@ -177,6 +181,54 @@ public class Main {
             }
         }
         log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() + "\".");
+    }
+
+    public static void hardestCard(Set<Card> flashcards) {
+        int largestMistakeCount = 0;
+        int numOfHardestCards = 0;
+        for (Card card: flashcards) {
+            if (card.getMistakes() > largestMistakeCount) {
+                largestMistakeCount = card.getMistakes();
+                numOfHardestCards = 1;
+            }
+            else if (card.getMistakes() == largestMistakeCount) {
+                numOfHardestCards++;
+            }
+        }
+
+        ArrayList<Card> hardestCardArr = new ArrayList<>();
+        for (Card card: flashcards) {
+            if (card.getMistakes() == largestMistakeCount) {
+                hardestCardArr.add(card);
+            }
+        }
+
+        switch (numOfHardestCards) {
+            case 0:
+                log.outputMessage("There are no cards with errors.");
+                break;
+            case 1:
+                log.outputMessage(
+                        "The hardest card is \"" + hardestCardArr.get(0).getTerm() +
+                        "\". You have " + largestMistakeCount +
+                        " errors answering it."
+                );
+                break;
+            default:
+                StringBuilder hardestCardString = new StringBuilder();
+                for (Card card: hardestCardArr) {
+                    hardestCardString.append("\"").append(card.getTerm()).append("\"");
+                    if (hardestCardArr.indexOf(card) != hardestCardArr.toArray().length - 1) {
+                        hardestCardString.append(", ");
+                    }
+                }
+                log.outputMessage(
+                        "The hardest cards are " +
+                        hardestCardString +
+                        ". You have " + largestMistakeCount +
+                        " errors answering them.");
+                break;
+        }
     }
 }
 
