@@ -7,13 +7,20 @@ import java.io.IOException;
 import java.util.*;
 
 public class Main {
-    static final Scanner input = new Scanner(System.in);
-    static final Random random = new Random();
-    static final Log log = new Log();
-    static final Set<Card> flashcards = new HashSet<>();
+
+    // Objects made static for fluid use throughout the program, all final
+    static final Scanner input = new Scanner(System.in); // Scanner for user input
+    static final Random random = new Random(); // Random for asking random flashcard questions, may want to refactor
+    static final Log log = new Log(); // Log for all inputs and outputs during current session
+    static final Set<Card> flashcards = new HashSet<>(); // Our HashSet of Flashcards
+
     public static void main(String[] args) {
-        boolean exportToFile = false;
+        boolean exportToFile = false; // checks to see if cards should be exported at the end of the program running
         String exportArg = null;
+
+        // checks to see if any arguments have been supplied on the command line
+        // if an import argument exists, import the cards from the file right away
+        // if an export argument exists, tell the program to store flashcards to the file before exiting
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-import")) {
                 String importArg = args[i+1];
@@ -24,15 +31,20 @@ public class Main {
                 exportToFile = true;
             }
         }
+
+        // gather user input, most of the program occurs here
         userInput();
+
+        // if export argument existed, export cards before exiting
         if (exportToFile) {
             exportCards(exportArg);
         }
         log.outputMessage("Bye bye!");
     }
 
+    // asks the user to input an action, uses that input to then call a method to enact said action
     public static void userInput() {
-        while (true) {
+        while (true) { // loop breaks via return statement if action equals "exit"
             log.outputMessage("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
             String action = input.nextLine();
             log.storeMessage(action);
@@ -43,24 +55,17 @@ public class Main {
                 case "remove":
                     removeCard();
                     break;
-                case "import":
-                    importCards();
-                    break;
                 case "export":
                     exportCards();
                     break;
+                case "import":
+                    importCards();
+                    break;
                 case "ask":
-                    if(flashcards.isEmpty()) {
-                        log.outputMessage("Add a card first!");
-                        break;
-                    }
                     askCard();
                     break;
                 case "log":
-                    log.outputMessage("File name:");
-                    String fileName = input.nextLine();
-                    log.storeMessage(fileName);
-                    log.exportLog(fileName);
+                    logCards();
                     break;
                 case "hardest card":
                     hardestCard();
@@ -180,6 +185,10 @@ public class Main {
     }
 
     public static void askCard() {
+        if(flashcards.isEmpty()) {
+            log.outputMessage("Add a card first!");
+            return;
+        }
         log.outputMessage("How many times to ask?");
         int count = input.nextInt();
         log.storeMessage(Integer.toString(count));
@@ -216,6 +225,13 @@ public class Main {
             }
         }
         log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() + "\".");
+    }
+
+    public static void logCards() {
+        log.outputMessage("File name:");
+        String fileName = input.nextLine();
+        log.storeMessage(fileName);
+        log.exportLog(fileName);
     }
 
     public static void hardestCard() {
