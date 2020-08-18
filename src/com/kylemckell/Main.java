@@ -232,6 +232,7 @@ public class Main {
                             " errors answering them.");
         }
     }
+
     public static void resetStats(Set<Card> flashcards) {
         for (Card card: flashcards) {
             card.setMistakes(0);
