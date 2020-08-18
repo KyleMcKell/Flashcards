@@ -127,10 +127,6 @@ public class Main {
         } catch (FileNotFoundException e) {
             log.outputMessage("File not found");
         }
-
-        for (Card card: flashcards) {
-            System.out.println(card.getMistakes());
-        }
     }
 
     public static void importParser(String importedText, Set<Card> flashcards) {
