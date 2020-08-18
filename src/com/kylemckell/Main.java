@@ -198,6 +198,11 @@ public class Main {
             }
         }
 
+        if (largestMistakeCount == 0) {
+            log.outputMessage("There are no cards with errors.");
+            return;
+        }
+
         ArrayList<Card> hardestCardArr = new ArrayList<>();
         for (Card card: flashcards) {
             if (card.getMistakes() == largestMistakeCount) {
@@ -205,31 +210,26 @@ public class Main {
             }
         }
 
-        switch (numOfHardestCards) {
-            case 0:
-                log.outputMessage("There are no cards with errors.");
-                break;
-            case 1:
-                log.outputMessage(
-                        "The hardest card is \"" + hardestCardArr.get(0).getTerm() +
-                        "\". You have " + largestMistakeCount +
-                        " errors answering it."
-                );
-                break;
-            default:
-                StringBuilder hardestCardString = new StringBuilder();
-                for (Card card: hardestCardArr) {
-                    hardestCardString.append("\"").append(card.getTerm()).append("\"");
-                    if (hardestCardArr.indexOf(card) != hardestCardArr.toArray().length - 1) {
-                        hardestCardString.append(", ");
-                    }
+        if (numOfHardestCards == 1) {
+            log.outputMessage(
+                    "The hardest card is \"" + hardestCardArr.get(0).getTerm() +
+                            "\". You have " + largestMistakeCount +
+                            " errors answering it."
+            );
+        }
+        else {
+            StringBuilder hardestCardString = new StringBuilder();
+            for (Card card : hardestCardArr) {
+                hardestCardString.append("\"").append(card.getTerm()).append("\"");
+                if (hardestCardArr.indexOf(card) != hardestCardArr.toArray().length - 1) {
+                    hardestCardString.append(", ");
                 }
-                log.outputMessage(
-                        "The hardest cards are " +
-                        hardestCardString +
-                        ". You have " + largestMistakeCount +
-                        " errors answering them.");
-                break;
+            }
+            log.outputMessage(
+                    "The hardest cards are " +
+                            hardestCardString +
+                            ". You have " + largestMistakeCount +
+                            " errors answering them.");
         }
     }
     public static void resetStats(Set<Card> flashcards) {
