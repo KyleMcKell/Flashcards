@@ -17,18 +17,18 @@ public class Main {
     public static void main(String[] args) {
 
         boolean exportToFile = false; // checks to see if cards should be exported at the end of the program running
-        String exportArg = null;
+        String exportFile = null;
 
         // checks to see if any arguments have been supplied on the command line
         // if an import argument exists, import the cards from the file right away
         // if an export argument exists, tell the program to store flashcards to the file before exiting
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-import")) {
-                String importArg = args[i+1];
-                importSetup(importArg);
+                String importFile = args[i+1];
+                fileSetup("import", importFile);
             }
             else if (args[i].equals("-export")) {
-                exportArg = args[i+1];
+                exportFile = args[i+1];
                 exportToFile = true;
             }
         }
@@ -38,7 +38,7 @@ public class Main {
 
         // if export argument existed, export cards before exiting
         if (exportToFile) {
-            exportSetup(exportArg);
+            fileSetup("export", exportFile);
         }
         log.outputMessage("Bye bye!");
     }
@@ -59,10 +59,10 @@ public class Main {
                     removeCard();
                     break;
                 case "export":
-                    exportSetup();
+                    fileSetup("export");
                     break;
                 case "import":
-                    importSetup();
+                    fileSetup("import");
                     break;
                 case "ask":
                     askCard();
@@ -139,19 +139,23 @@ public class Main {
         }
     }
 
-    // Next 3 methods handle the exporting of cards
 
-   // if useraction was export, this is called to ask for a fileName
-    public static void exportSetup() {
+    // if a filename isn't supplied, get the filename to interact with
+    public static void fileSetup(String type) {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
-        exportCards(fileName);
+        fileSetup(type, fileName);
     }
 
-    // if command line arg existed, this is called, fileName was the argument so it already exists
-    public static void exportSetup(String fileName) {
-        exportCards(fileName);
+    // if importing call import method
+    // if exporting call export method
+    public static void fileSetup(String type, String fileName) {
+        if (type.equals("import"))
+            importCards(fileName);
+        else if (type.equals("export")) {
+            exportCards(fileName);
+        }
     }
 
     // exports flashcards to a file, see example of exported file structure in README.md
@@ -166,18 +170,6 @@ public class Main {
             System.out.printf("An exception occurs %s", e.getMessage());
             log.storeMessage("An exception occurred");
         }
-    }
-
-    // if useraction was export, this is called to ask for a fileName
-    public static void importSetup() {
-        log.outputMessage("File name:");
-        String fileName = input.nextLine();
-        log.storeMessage(fileName);
-        importCards(fileName);
-    }
-
-    public static void importSetup(String fileName) {
-        importCards(fileName);
     }
 
     private static void importCards(String fileName) {
