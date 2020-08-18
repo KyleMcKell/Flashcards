@@ -25,3 +25,5 @@ artifacts/
 # Maven
 log/
 target/
+
+ToDo.md
