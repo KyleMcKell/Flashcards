@@ -12,6 +12,12 @@ public class Main {
     static final Log log = new Log();
     public static void main(String[] args) {
         Set<Card> flashcards = new HashSet<>();
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-import")) {
+                String importArg = args[i+1];
+                importCards(flashcards, importArg);
+            }
+        }
         boolean anotherAction = true;
         while (anotherAction) {
             log.outputMessage("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
@@ -116,6 +122,14 @@ public class Main {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
+        importSetup(flashcards, fileName);
+    }
+
+    public static void importCards(Set<Card> flashcards, String fileName) {
+        importSetup(flashcards, fileName);
+    }
+
+    private static void importSetup(Set<Card> flashcards, String fileName) {
         File file = new File(fileName);
         try (Scanner scanner = new Scanner(file)) {
             int count = 0;
