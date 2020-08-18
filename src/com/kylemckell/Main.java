@@ -48,7 +48,7 @@ public class Main {
 
         // loop breaks via return statement if action equals "exit"
         while (true) {
-            log.outputMessage("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
+            log.outputMessage("Input the action (add, remove, import, export, ask, hardest card, reset stats, log, exit):");
             String action = input.nextLine();
             log.storeMessage(action);
             switch (action) {
