@@ -5,9 +5,10 @@ class Card {
     private String definition;
     private int mistakes;
 
-    public Card(String term, String definition) {
+    public Card(String term, String definition, int mistakes) {
         this.term = term;
         this.definition = definition;
+        this.mistakes = mistakes;
     }
 
     public String getTerm() {

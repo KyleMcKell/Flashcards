@@ -79,7 +79,7 @@ public class Main {
             }
         }
         log.outputMessage("The pair (\"" + term + "\":\"" + definition + "\") has been added.");
-        flashcards.add(new Card(term, definition));
+        flashcards.add(new Card(term, definition, 0));
     }
 
     public static void removeCard(Set<Card> flashcards) {
@@ -128,15 +128,19 @@ public class Main {
             log.outputMessage("File not found");
         }
 
+        for (Card card: flashcards) {
+            System.out.println(card.getMistakes());
+        }
     }
 
     public static void importParser(String importedText, Set<Card> flashcards) {
         String[] cardArray = importedText.split(",");
-        Card card = new Card(cardArray[0], cardArray[1]);
+        int mistakes = Integer.parseInt(cardArray[2]);
+        Card card = new Card(cardArray[0], cardArray[1], mistakes);
         for (Card flashcard: flashcards) {
             if (flashcard.getTerm().equals(card.getTerm())) {
                 flashcard.setDefinition(cardArray[1]);
-                flashcard.setMistakes(Integer.parseInt(cardArray[2]));
+                flashcard.setMistakes(flashcard.getMistakes() + mistakes);
                 return;
             }
             else if (flashcard.getDefinition().equals(card.getDefinition())) {

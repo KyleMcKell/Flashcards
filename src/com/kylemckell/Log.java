@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Log {
+class Log {
     private final Collection<String> logs;
 
     public Log() {
