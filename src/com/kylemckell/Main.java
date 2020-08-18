@@ -10,14 +10,14 @@ public class Main {
     static final Scanner input = new Scanner(System.in);
     static final Random random = new Random();
     static final Log log = new Log();
+    static final Set<Card> flashcards = new HashSet<>();
     public static void main(String[] args) {
-        Set<Card> flashcards = new HashSet<>();
         boolean exportToFile = false;
         String exportArg = null;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-import")) {
                 String importArg = args[i+1];
-                importCards(flashcards, importArg);
+                importCards(importArg);
             }
             else if (args[i].equals("-export")) {
                 exportArg = args[i+1];
@@ -31,23 +31,23 @@ public class Main {
             log.storeMessage(action);
             switch (action) {
                 case "add":
-                    addCard(flashcards);
+                    addCard();
                     break;
                 case "remove":
-                    removeCard(flashcards);
+                    removeCard();
                     break;
                 case "import":
-                    importCards(flashcards);
+                    importCards();
                     break;
                 case "export":
-                    exportCards(flashcards);
+                    exportCards();
                     break;
                 case "ask":
                     if(flashcards.isEmpty()) {
                         log.outputMessage("Add a card first!");
                         break;
                     }
-                    askCard(flashcards);
+                    askCard();
                     break;
                 case "log":
                     log.outputMessage("File name:");
@@ -56,16 +56,16 @@ public class Main {
                     log.exportLog(fileName);
                     break;
                 case "hardest card":
-                    hardestCard(flashcards);
+                    hardestCard();
                     break;
                 case "reset stats":
-                    resetStats(flashcards);
+                    resetStats();
                     break;
                 case "exit":
                     anotherAction = false;
                     log.outputMessage("Bye bye!");
                     if (exportToFile) {
-                        exportCards(flashcards, exportArg);
+                        exportCards(exportArg);
                     }
                     break;
                 default:
@@ -74,7 +74,7 @@ public class Main {
         }
     }
 
-    public static void addCard(Set<Card> flashcards) {
+    public static void addCard() {
         log.outputMessage("The card:");
         String term = input.nextLine();
         log.storeMessage(term);
@@ -97,7 +97,7 @@ public class Main {
         flashcards.add(new Card(term, definition, 0));
     }
 
-    public static void removeCard(Set<Card> flashcards) {
+    public static void removeCard() {
         log.outputMessage("The card:");
         String cardTerm = input.nextLine();
         log.storeMessage(cardTerm);
@@ -111,18 +111,18 @@ public class Main {
         }
     }
 
-    public static void exportCards(Collection<Card> flashcards) {
+    public static void exportCards() {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
-        exportSetup(flashcards, fileName);
+        exportSetup(fileName);
     }
 
-    public static void exportCards(Collection<Card> flashcards, String fileName) {
-        exportSetup(flashcards, fileName);
+    public static void exportCards(String fileName) {
+        exportSetup(fileName);
     }
 
-    private static void exportSetup(Collection<Card> flashcards, String fileName) {
+    private static void exportSetup(String fileName) {
         File file = new File("./" + fileName);
         try (FileWriter writer = new FileWriter(file)) {
             for (Card card: flashcards) {
@@ -135,23 +135,23 @@ public class Main {
         }
     }
 
-    public static void importCards(Set<Card> flashcards) {
+    public static void importCards() {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
-        importSetup(flashcards, fileName);
+        importSetup(fileName);
     }
 
-    public static void importCards(Set<Card> flashcards, String fileName) {
-        importSetup(flashcards, fileName);
+    public static void importCards(String fileName) {
+        importSetup(fileName);
     }
 
-    private static void importSetup(Set<Card> flashcards, String fileName) {
+    private static void importSetup(String fileName) {
         File file = new File(fileName);
         try (Scanner scanner = new Scanner(file)) {
             int count = 0;
             while (scanner.hasNext()) {
-                importParser(scanner.nextLine(), flashcards);
+                importParser(scanner.nextLine());
                 count++;
             }
             log.outputMessage(count + " cards have been loaded.");
@@ -160,7 +160,7 @@ public class Main {
         }
     }
 
-    public static void importParser(String importedText, Set<Card> flashcards) {
+    public static void importParser(String importedText) {
         String[] cardArray = importedText.split(",");
         int mistakes = Integer.parseInt(cardArray[2]);
         Card card = new Card(cardArray[0], cardArray[1], mistakes);
@@ -177,7 +177,7 @@ public class Main {
         flashcards.add(card);
     }
 
-    public static void askCard(Set<Card> flashcards) {
+    public static void askCard() {
         log.outputMessage("How many times to ask?");
         int count = input.nextInt();
         log.storeMessage(Integer.toString(count));
@@ -187,7 +187,7 @@ public class Main {
             int referenceNum = 0;
             for (Card flashcard: flashcards) {
                 if (referenceRandom == referenceNum) {
-                    cardGrading(flashcard, flashcards);
+                    cardGrading(flashcard);
                 }
                 referenceNum++;
             }
@@ -195,7 +195,7 @@ public class Main {
         }
     }
 
-    public static void cardGrading(Card card, Set<Card> flashcards) {
+    public static void cardGrading(Card card) {
         log.outputMessage("Print the definition of \"" + card.getTerm() + "\":");
         String definition = input.nextLine();
         log.storeMessage(definition);
@@ -216,7 +216,7 @@ public class Main {
         log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() + "\".");
     }
 
-    public static void hardestCard(Set<Card> flashcards) {
+    public static void hardestCard() {
         int largestMistakeCount = 0;
         int numOfHardestCards = 0;
         for (Card card: flashcards) {
@@ -264,7 +264,7 @@ public class Main {
         }
     }
 
-    public static void resetStats(Set<Card> flashcards) {
+    public static void resetStats() {
         for (Card card: flashcards) {
             card.setMistakes(0);
         }
