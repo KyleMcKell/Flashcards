@@ -24,8 +24,15 @@ public class Main {
                 exportToFile = true;
             }
         }
-        boolean anotherAction = true;
-        while (anotherAction) {
+        userInput();
+        if (exportToFile) {
+            exportCards(exportArg);
+        }
+        log.outputMessage("Bye bye!");
+    }
+
+    public static void userInput() {
+        while (true) {
             log.outputMessage("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
             String action = input.nextLine();
             log.storeMessage(action);
@@ -62,12 +69,7 @@ public class Main {
                     resetStats();
                     break;
                 case "exit":
-                    anotherAction = false;
-                    log.outputMessage("Bye bye!");
-                    if (exportToFile) {
-                        exportCards(exportArg);
-                    }
-                    break;
+                    return;
                 default:
                     break;
             }
