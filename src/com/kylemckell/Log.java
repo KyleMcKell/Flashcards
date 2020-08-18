@@ -11,7 +11,7 @@ class Log {
     private final Collection<String> logs;
 
     public Log() {
-        this.logs = new ArrayList<>() // Arraylist is used to keep the log in order chronologically;
+        this.logs = new ArrayList<>(); // Arraylist is used to keep the log in order chronologically;
     }
 
     // replaces all System.out.println, doubles as an output and also calls the storage of the message
