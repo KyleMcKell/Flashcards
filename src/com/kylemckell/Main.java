@@ -172,6 +172,7 @@ public class Main {
         }
     }
 
+    // imports flashcards from a file. reads each line, then passes the line to another method to parse
     private static void importCards(String fileName) {
         File file = new File(fileName);
         try (Scanner scanner = new Scanner(file)) {
@@ -186,16 +187,21 @@ public class Main {
         }
     }
 
+    // parses what the line of the scanner reads
+    // makes card objects that have a term, definition, and amount of mistakes
     public static void importParser(String importedText) {
         String[] cardArray = importedText.split(",");
         int mistakes = Integer.parseInt(cardArray[2]);
         Card card = new Card(cardArray[0], cardArray[1], mistakes);
         for (Card flashcard: flashcards) {
+            // if a card already exists, in flashcards, set the definition to the imported definition
+            // additionally, add any mistakes that current exist with the word to the current session's mistakes
             if (flashcard.getTerm().equals(card.getTerm())) {
                 flashcard.setDefinition(cardArray[1]);
                 flashcard.setMistakes(flashcard.getMistakes() + mistakes);
                 return;
             }
+            // if the definition already exists, don't add the card
             else if (flashcard.getDefinition().equals(card.getDefinition())) {
                 return;
             }
@@ -203,37 +209,57 @@ public class Main {
         flashcards.add(card);
     }
 
+    // quizzes the user on random flashcards using a random number
     public static void askCard() {
+
+        // makes sure the card pool isn't empty before asking to prevent errors
         if(flashcards.isEmpty()) {
             log.outputMessage("Add a card first!");
             return;
         }
+
+        // checks to see how many times the user would like to be asked for a definition
         log.outputMessage("How many times to ask?");
         int count = input.nextInt();
         log.storeMessage(Integer.toString(count));
         input.nextLine();
+
         while (count > 0) {
+            // Hashset doesn't use indexes, so we have to make our own version of a randomly chosen index
+            // make a random number within our indexes of our cards
             int referenceRandom = random.nextInt(flashcards.size());
+            // reference num to compare our random num to with each iteration
             int referenceNum = 0;
             for (Card flashcard: flashcards) {
+                // if the reference num and random num match, ask about that card
                 if (referenceRandom == referenceNum) {
                     cardGrading(flashcard);
                 }
+                // if the ref num and rand num don't match, increment ref num and loop again
                 referenceNum++;
             }
             count--;
         }
     }
 
+    // asks the user for the definition and evaluates if they were correct
     public static void cardGrading(Card card) {
+        // ask for the definition
         log.outputMessage("Print the definition of \"" + card.getTerm() + "\":");
         String definition = input.nextLine();
         log.storeMessage(definition);
+
+        // if they get it right, this method ends and the user is told they got the correct answer
         if (definition.equals(card.getDefinition())) {
             log.outputMessage("Correct Answer");
             return;
         }
+
+        // if they are wrong, they get a mistake added to that card
         card.addMistake();
+
+        // if the definition that they listed is the correct answer for a different card
+        // we let them know by looping through our HashSet to see if any other cards hold that def
         for (Card flashcard: flashcards) {
             if (definition.equals(flashcard.getDefinition())) {
                 log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() +
@@ -243,9 +269,12 @@ public class Main {
                 return;
             }
         }
+
+        // if the definition was just wrong for everything, the right answer is told to them
         log.outputMessage("Wrong answer. The right answer is \"" + card.getDefinition() + "\".");
     }
 
+    // logs the inputs and outputs of the current session into a separate file
     public static void logCards() {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
@@ -253,7 +282,11 @@ public class Main {
         log.exportLog(fileName);
     }
 
+    // the card which the user has made the most mistakes with is the hardest card
+    // let the user know which card they mess up most with
     public static void hardestCard() {
+
+        // find what the largest mistake count is for any of our cards
         int largestMistakeCount = 0;
         int numOfHardestCards = 0;
         for (Card card: flashcards) {
@@ -266,11 +299,13 @@ public class Main {
             }
         }
 
+        // if the mistake count is 0, there are no cards with any errors, let the user know they are PERFECT!
         if (largestMistakeCount == 0) {
-            log.outputMessage("There are no cards with errors.");
+            log.outputMessage("There are no cards with errors. Yay!");
             return;
         }
 
+        // there may be multiple cards with the most mistakes, find all of them and make an arrlist of them
         ArrayList<Card> hardestCardArr = new ArrayList<>();
         for (Card card: flashcards) {
             if (card.getMistakes() == largestMistakeCount) {
@@ -278,6 +313,7 @@ public class Main {
             }
         }
 
+        // output a message letting the user know what their hardest card was if it was only 1 card
         if (numOfHardestCards == 1) {
             log.outputMessage(
                     "The hardest card is \"" + hardestCardArr.get(0).getTerm() +
@@ -285,6 +321,7 @@ public class Main {
                             " errors answering it."
             );
         }
+        // output a message if they had mutliple hard cards
         else {
             StringBuilder hardestCardString = new StringBuilder();
             for (Card card : hardestCardArr) {
@@ -301,6 +338,7 @@ public class Main {
         }
     }
 
+    // resets all mistake counts to 0 for each flashcard
     public static void resetStats() {
         for (Card card: flashcards) {
             card.setMistakes(0);
