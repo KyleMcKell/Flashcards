@@ -12,10 +12,16 @@ public class Main {
     static final Log log = new Log();
     public static void main(String[] args) {
         Set<Card> flashcards = new HashSet<>();
+        boolean exportToFile = false;
+        String exportArg = null;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-import")) {
                 String importArg = args[i+1];
                 importCards(flashcards, importArg);
+            }
+            else if (args[i].equals("-export")) {
+                exportArg = args[i+1];
+                exportToFile = true;
             }
         }
         boolean anotherAction = true;
@@ -58,6 +64,9 @@ public class Main {
                 case "exit":
                     anotherAction = false;
                     log.outputMessage("Bye bye!");
+                    if (exportToFile) {
+                        exportCards(flashcards, exportArg);
+                    }
                     break;
                 default:
                     break;
@@ -106,6 +115,14 @@ public class Main {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
+        exportSetup(flashcards, fileName);
+    }
+
+    public static void exportCards(Collection<Card> flashcards, String fileName) {
+        exportSetup(flashcards, fileName);
+    }
+
+    private static void exportSetup(Collection<Card> flashcards, String fileName) {
         File file = new File("./" + fileName);
         try (FileWriter writer = new FileWriter(file)) {
             for (Card card: flashcards) {
