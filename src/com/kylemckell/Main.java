@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
@@ -46,6 +45,9 @@ public class Main {
                     break;
                 case "hardest card":
                     hardestCard(flashcards);
+                    break;
+                case "reset stats":
+                    resetStats(flashcards);
                     break;
                 case "exit":
                     anotherAction = false;
@@ -229,6 +231,12 @@ public class Main {
                         " errors answering them.");
                 break;
         }
+    }
+    public static void resetStats(Set<Card> flashcards) {
+        for (Card card: flashcards) {
+            card.setMistakes(0);
+        }
+        log.outputMessage("Card statistics has been reset.");
     }
 }
 
