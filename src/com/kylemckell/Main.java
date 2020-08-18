@@ -15,6 +15,7 @@ public class Main {
     static final Set<Card> flashcards = new HashSet<>(); // Our HashSet of Flashcards
 
     public static void main(String[] args) {
+
         boolean exportToFile = false; // checks to see if cards should be exported at the end of the program running
         String exportArg = null;
 
@@ -24,7 +25,7 @@ public class Main {
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-import")) {
                 String importArg = args[i+1];
-                importCards(importArg);
+                importSetup(importArg);
             }
             else if (args[i].equals("-export")) {
                 exportArg = args[i+1];
@@ -37,14 +38,16 @@ public class Main {
 
         // if export argument existed, export cards before exiting
         if (exportToFile) {
-            exportCards(exportArg);
+            exportSetup(exportArg);
         }
         log.outputMessage("Bye bye!");
     }
 
     // asks the user to input an action, uses that input to then call a method to enact said action
     public static void userInput() {
-        while (true) { // loop breaks via return statement if action equals "exit"
+
+        // loop breaks via return statement if action equals "exit"
+        while (true) {
             log.outputMessage("Input the action (add, remove, import, export, ask, exit, log, hardest card, reset stats):");
             String action = input.nextLine();
             log.storeMessage(action);
@@ -56,10 +59,10 @@ public class Main {
                     removeCard();
                     break;
                 case "export":
-                    exportCards();
+                    exportSetup();
                     break;
                 case "import":
-                    importCards();
+                    importSetup();
                     break;
                 case "ask":
                     askCard();
@@ -81,35 +84,53 @@ public class Main {
         }
     }
 
+    // adds a card to flashcard HashSet, asking for both term and definition
     public static void addCard() {
+
+        // asking for term of card
         log.outputMessage("The card:");
         String term = input.nextLine();
         log.storeMessage(term);
+
+        // making sure the card doesn't already exist, if it does, don't add the card
         for (Card card: flashcards) {
             if (card.getTerm().equals(term)) {
                 log.outputMessage("The card \"" + term + "\" already exists.");
                 return;
             }
         }
+
+        // asking for definition of card
         log.outputMessage("The definition of the card:");
         String definition = input.nextLine();
         log.storeMessage(definition);
+
+        // making sure the definition doesn't already exist, if it does, don't add the card
         for (Card card: flashcards) {
             if (card.getDefinition().equals(definition)) {
                 log.outputMessage("The definition of \"" + definition + "\" already exists.");
                 return;
             }
         }
+
+        // add the card to the flashcard HashSet
         log.outputMessage("The pair (\"" + term + "\":\"" + definition + "\") has been added.");
         flashcards.add(new Card(term, definition, 0));
     }
 
+    // removes a card via the term of the card
     public static void removeCard() {
+
+        // asking for which card the user would like to remove
         log.outputMessage("The card:");
         String cardTerm = input.nextLine();
         log.storeMessage(cardTerm);
+
+        //checking to see if the card is actually removed or not with a removeIf statement
         int initialSize = flashcards.size();
         flashcards.removeIf(card -> card.getTerm().equals(cardTerm));
+
+        // if the size of our set is the same, the card wasn't removed, tell user the card doesn't exist
         if (initialSize == flashcards.size()) {
             log.outputMessage("Can't remove \"" + cardTerm + "\":m there is no such card.");
         }
@@ -118,18 +139,23 @@ public class Main {
         }
     }
 
-    public static void exportCards() {
+    // Next 3 methods handle the exporting of cards
+
+   // if useraction was export, this is called to ask for a fileName
+    public static void exportSetup() {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
-        exportSetup(fileName);
+        exportCards(fileName);
     }
 
-    public static void exportCards(String fileName) {
-        exportSetup(fileName);
+    // if command line arg existed, this is called, fileName was the argument so it already exists
+    public static void exportSetup(String fileName) {
+        exportCards(fileName);
     }
 
-    private static void exportSetup(String fileName) {
+    // exports flashcards to a file, see example of exported file structure in README.md
+    private static void exportCards(String fileName) {
         File file = new File("./" + fileName);
         try (FileWriter writer = new FileWriter(file)) {
             for (Card card: flashcards) {
@@ -142,18 +168,19 @@ public class Main {
         }
     }
 
-    public static void importCards() {
+    // if useraction was export, this is called to ask for a fileName
+    public static void importSetup() {
         log.outputMessage("File name:");
         String fileName = input.nextLine();
         log.storeMessage(fileName);
-        importSetup(fileName);
+        importCards(fileName);
     }
 
-    public static void importCards(String fileName) {
-        importSetup(fileName);
+    public static void importSetup(String fileName) {
+        importCards(fileName);
     }
 
-    private static void importSetup(String fileName) {
+    private static void importCards(String fileName) {
         File file = new File(fileName);
         try (Scanner scanner = new Scanner(file)) {
             int count = 0;
